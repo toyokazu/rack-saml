@@ -19,6 +19,10 @@ Current implementation does not support assertion encryption. So thus, assertion
 
 Current implementation does not support keeping session at SP side.
 
+### Discovery Service (Shibboleth)
+
+Current implementation does not support discovery service.
+
 ## Getting Started
 
 ### Installation
