@@ -1,0 +1,6 @@
+protected_path: /auth/shibboleth/callback
+# protected_path_regexp: true
+metadata_path: /Shibboleth.sso/Metadata
+assertion_handler: onelogin
+saml_idp: https://localhost/idp/shibboleth
+saml_sp: http://localhost:3000/auth/shibboleth/callback

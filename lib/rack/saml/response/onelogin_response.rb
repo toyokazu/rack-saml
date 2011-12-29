@@ -1,0 +1,26 @@
+module Rack
+  class Saml
+    require 'rack/saml/misc/onelogin_setting'
+
+    class OneloginResponse < AbstractResponse
+      include OneloginSetting
+      #extend Forwardable
+
+      def initialize(request, saml_config, metadata)
+        super(request, saml_config, metadata)
+        @response = Onelogin::Saml::Response.new(@request.params['SAMLResponse'])
+        @response.settings = saml_settings
+      end
+
+      def is_valid?
+        @response.is_valid?
+      end
+
+      def attributes
+        @response.attributes
+      end
+
+      #def_delegator :@response, :is_valid?, :attributes
+    end
+  end
+end
