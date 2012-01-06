@@ -9,10 +9,10 @@ module Rack
 
       # Rack::Saml::MetadataHandler
       # request: Rack current request instance
-      # saml_config: config/saml.yml 
+      # config: config/rack-saml.yml 
       # metadata: specified idp entity in the config/metadata.yml
-      def initialize(request, saml_config, metadata)
-        @sp_metadata = (eval "Rack::Saml::#{saml_config['assertion_handler'].to_s.capitalize}Metadata").new(request, saml_config, metadata)
+      def initialize(request, config, metadata)
+        @sp_metadata = (eval "Rack::Saml::#{config['assertion_handler'].to_s.capitalize}Metadata").new(request, config, metadata)
       end
     end
   end

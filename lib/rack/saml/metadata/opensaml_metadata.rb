@@ -2,7 +2,7 @@ module Rack
   class Saml
     class OpensamlMetadata < AbstractMetadata
       # to be implemented
-      def initialize(request, saml_config, metadata)
+      def initialize(request, config, metadata)
       end
 
       def generate

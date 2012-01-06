@@ -5,8 +5,8 @@ module Rack
     class OneloginRequest < AbstractRequest
       include OneloginSetting
 
-      def initialize(request, saml_config, metadata)
-        super(request, saml_config, metadata)
+      def initialize(request, config, metadata)
+        super(request, config, metadata)
         @authrequest = Onelogin::Saml::Authrequest.new
       end
 

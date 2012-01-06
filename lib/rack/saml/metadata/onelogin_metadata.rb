@@ -5,8 +5,8 @@ module Rack
     class OneloginMetadata < AbstractMetadata
       include OneloginSetting
 
-      def initialize(request, saml_config, metadata)
-        super(request, saml_config, metadata)
+      def initialize(request, config, metadata)
+        super(request, config, metadata)
         @sp_metadata = Onelogin::Saml::Metadata.new
       end
 

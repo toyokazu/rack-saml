@@ -6,8 +6,8 @@ module Rack
       include OneloginSetting
       #extend Forwardable
 
-      def initialize(request, saml_config, metadata)
-        super(request, saml_config, metadata)
+      def initialize(request, config, metadata)
+        super(request, config, metadata)
         @response = Onelogin::Saml::Response.new(@request.params['SAMLResponse'])
         @response.settings = saml_settings
       end

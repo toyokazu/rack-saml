@@ -9,19 +9,33 @@ module Rack
 
       # Rack::Saml::ResponseHandler
       # request: Rack current request instance
-      # saml_config: config/saml.yml 
+      # config: config/saml.yml 
       # metadata: specified idp entity in the config/metadata.yml
-      def initialize(request, saml_config, metadata)
-        @response = (eval "Rack::Saml::#{saml_config['assertion_handler'].to_s.capitalize}Response").new(request, saml_config, metadata)
+      def initialize(request, config, metadata)
+        @response = (eval "Rack::Saml::#{config['assertion_handler'].to_s.capitalize}Response").new(request, config, metadata)
       end
 
-      def extract_attrs(env, attribute_map, opts = {})
-        attribute_map.each do |attr_name, env_name|
-          attribute = @response.attributes[attr_name]
-          env[env_name] = attribute if !attribute.nil?
+      def extract_attrs(env, session, attribute_map)
+        if session.env.empty?
+          attribute_map.each do |attr_name, env_name|
+            attribute = @response.attributes[attr_name]
+            if !attribute.nil?
+              session.env[env_name] = attribute
+            end
+          end
+          if !@response.config['shib_app_id'].nil?
+            session.env['Shib-Application-ID'] = @response.config['shib_app_id']
+            session.env['Shib-Session-ID'] = session.get_sid('saml_res')
+          end
         end
-        if !opts[:shib_app_id].nil?
-          env['Shib-Application-ID'] = opts[:shib_app_id]
+        session.env.each do |k, v|
+          env[k] = v
+        end
+      end
+
+      def self.extract_attrs(env, session)
+        session.env.each do |k, v|
+          env[k] = v
         end
       end
     end

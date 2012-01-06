@@ -9,10 +9,10 @@ module Rack
 
       # Rack::Saml::RequestHandler
       # request: Rack current request instance
-      # saml_config: config/saml.yml 
+      # config: config/saml.yml 
       # metadata: specified idp entity in the config/metadata.yml
-      def initialize(request, saml_config, metadata)
-        @authn_request = (eval "Rack::Saml::#{saml_config['assertion_handler'].to_s.capitalize}Request").new(request, saml_config, metadata)
+      def initialize(request, config, metadata)
+        @authn_request = (eval "Rack::Saml::#{config['assertion_handler'].to_s.capitalize}Request").new(request, config, metadata)
       end
     end
   end

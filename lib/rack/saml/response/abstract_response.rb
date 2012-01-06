@@ -1,11 +1,11 @@
 module Rack
   class Saml
     class AbstractResponse
-      attr_reader :request, :saml_config, :metadata
+      attr_reader :request, :config, :metadata
 
-      def initialize(request, saml_config, metadata)
+      def initialize(request, config, metadata)
         @request = request
-        @saml_config = saml_config
+        @config = config
         @metadata = metadata
       end
 
