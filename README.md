@@ -1,6 +1,6 @@
-# SAML (Shibboleth SP) middleware for Rack
+# SAML (Shibboleth) SP middleware for Rack
 
-This project is deeply inspired by rack-shibboleth and ruby-saml. It is recommended to use the defact SAML implementation such as OpenSAML from the security or the functional aspect. However, there are also requirements to use SAML for light weight applications implemented by Ruby. rack-shibboleth may be a candidate to support such kind of objective. However it lacks the configurability to fit OmniAuth and OmniAuth Shibboleth Strategy. It also lacks the upgrade path to the secure and the stable SAML implementation like OpenSAML. So thus I just implemented a prototype to support SAML (Shibboleth SP) for Rack middleware.
+This project is deeply inspired by rack-shibboleth and ruby-saml. It is recommended to use the de facto SAML implementation such as OpenSAML from the security or the functional aspect. However, there are also requirements to use SAML for light weight applications implemented by Ruby. rack-shibboleth may be a candidate to support such kind of objective. However it lacks the configurability to fit OmniAuth and OmniAuth Shibboleth Strategy. It also lacks the upgrade path to the secure and the stable SAML implementation like OpenSAML. So thus I just implemented a prototype to support SAML (Shibboleth SP) for Rack middleware.
 
 OmniAuth Shibboleth Strategy
 https://github.com/toyokazu/omniauth-shibboleth
@@ -33,7 +33,7 @@ Current implementation supports only Onelogin SAML assertion handler. It does no
 
 Rack::Saml uses Rack::Session functions. You have to insert Rack::Session before Rack::Saml middleware. Rack::Session::Cookie is used in the following examples because it is easiest to setup and scale. You can use the other Rack::Session implementation. In a Rails application, it uses ActionDispatch::Session which is compatible with Rack::Session by default. So thus, you do not need to add Rack::Session in the Rails application.
 
-#### For Rack applicaitons
+**For Rack applicaitons**
 
 In the following example, config.ru is used to add Rack::Saml middleware into a Rails application.
 
@@ -43,7 +43,7 @@ In the following example, config.ru is used to add Rack::Saml middleware into a 
                      :metadata => "#{Rails.root}/config/metadata.yml",
                      :attribute_map => "#{Rails.root}/config/attribute-map.yml"}
 
-#### For Ralis applications
+**For Ralis applications**
 
 In the following example, config/application.rb is used to Rack::Saml middleware into a Rails application.
 
@@ -55,11 +55,11 @@ In the following example, config/application.rb is used to Rack::Saml middleware
                                        :attribute_map => "#{Rails.root}/config/attribute-map.yml"}
     ...
 
-#### Middleware options
+**Middleware options**
 
-* *:config* path to rack-saml.yml file
-* *:metadata* path to metadata.yml file
-* *:attribute_map* path to attribute-map.yml file
+* *:config*: path to rack-saml.yml file
+* *:metadata*: path to metadata.yml file
+* *:attribute_map*: path to attribute-map.yml file
 
 If you just want to test Rack::Saml, you can ommit middleware options in the both example (config.ru or config/application.rb).
 
@@ -73,25 +73,25 @@ Rack::Saml uses default configurations located in the rack-saml gem path.
 
 Please copy them to an arbitrary directory and edit them if you need. If you want to use your customized configuration file, do not forget to specify the configuration file path by middleware options.
 
-#### Configuration files
+**Configuration files**
 
 You can find default configuration files at
 
     $GEM_HOME/rack-saml-x.x.x/config/xxx.yml
 
-##### rack-saml.yml
+**rack-saml.yml**
 
 Configuration to set SAML parameters. At least, you must configure saml_idp or shib_ds. They depends on your environments.
 
-* *protected_path* path name where rack-saml protects, e.g. /auth/shibboleth/callback (default path for OmniAuth Shibboleth Strategy)
-* *metadata_path* the path name where SP's metadata is generated
-* *assertion_handler* 'onelogin' / 'opensaml' (not implemented yet)
-* *saml_idp* IdP's entity ID which is used to authenticate user. This parameter can be omitted when you use Shibboleth Discovery Service (shib_ds).
-* *saml_sess_timeout* SP session timeout (default: 1800 seconds)
-* *shib_app_id* If you want to use the middleware as Shibboleth SP, you should specify an application ID. In the Shibboleth SP default configuration, 'default' is used as the application ID.
-* *shib_ds* If you want to use the middleware as Shibboleth SP and use discovery service, specify the uri of the Discovery Service.
-* *sp_cert* path to the SAML SP's certificate file, e.g. cert.pem (AuthnRequest Signing and Response Encryption are not supported yet)
-* *sp_key* path to the SAML SP's key file, e.g. key.pem (AuthnRequest Signing and Response Encryption are not supported yet)
+* *protected_path*: path name where rack-saml protects, e.g. /auth/shibboleth/callback (default path for OmniAuth Shibboleth Strategy)
+* *metadata_path*: the path name where SP's metadata is generated
+* *assertion_handler*: 'onelogin' / 'opensaml' (not implemented yet)
+* *saml_idp*: IdP's entity ID which is used to authenticate user. This parameter can be omitted when you use Shibboleth Discovery Service (shib_ds).
+* *saml_sess_timeout*: SP session timeout (default: 1800 seconds)
+* *shib_app_id*: If you want to use the middleware as Shibboleth SP, you should specify an application ID. In the Shibboleth SP default configuration, 'default' is used as the application ID.
+* *shib_ds*: If you want to use the middleware as Shibboleth SP and use discovery service, specify the uri of the Discovery Service.
+* *sp_cert*: path to the SAML SP's certificate file, e.g. cert.pem (AuthnRequest Signing and Response Encryption are not supported yet)
+* *sp_key*: path to the SAML SP's key file, e.g. key.pem (AuthnRequest Signing and Response Encryption are not supported yet)
 
 SAML SP's entity ID (saml_sp) is automatically generated from request URI and /rack-saml-sp (fixed path name). The Assertion Consumer Service URI is generated from request URI and protected_path.
 
@@ -99,30 +99,30 @@ SAML SP's entity ID (saml_sp) is automatically generated from request URI and /r
     @config['saml_sp'] = "#{saml_sp_prefix}/rack-saml-sp"
     @config['assertion_consumer_service_uri'] = "#{saml_sp_prefix}#{@config['protected_path']}"
 
-##### metadata.yml
+**metadata.yml**
 
 To connect to an IdP, you must describe IdP's specification. In rack-saml, it should be written in metadata.yml. metadata.yml file include the following lists. You must generate your own metadata.yml by using conv_metadata.rb.
 
-* *idp_lists* list of IdP metadata
-* *sp_lists* list of SP metadata
+* *idp_lists*: list of IdP metadata
+* *sp_lists*: list of SP metadata
 
 idp_lists and sp_lists are hashes which have entity ids as key values.
 
 parameters of the idp_lists:
 
-* *certificate* base64 encoded certificate of IdP
-* *saml2_http_redirect* Location attribute of the IdP's assertion handler uri with HTTP Redirect Binding
+* *certificate*: base64 encoded certificate of IdP
+* *saml2_http_redirect*: Location attribute of the IdP's assertion handler uri with HTTP Redirect Binding
 
 parameters of the sp_lists (currently not used):
 
-* *certificate* base64 encoded certificate of SP
-* *saml2_http_post* Location attribute of the SP's assertion consumer uri with HTTP POST Binding
+* *certificate*: base64 encoded certificate of SP
+* *saml2_http_post*: Location attribute of the SP's assertion consumer uri with HTTP POST Binding
 
 These parameters are automatically extracted from SAML metadata (XML). You can use conv_metadata.rb command for extraction.
 
     % $GEM_HOME/rack-saml-x.x.x/bin/conv_metadata.rb metadata.xml > metadata.yml
 
-##### attribute-map.yml
+**attribute-map.yml**
 
 attribute-map.yml can extract attributes from SAML Response and put attributes on request environment variables. It is useful to pass attributes into applications. The configuration file format is as follows:
 
@@ -134,15 +134,15 @@ You can use default attribute-map.yml file. If you want to add new attributes, p
 
 ### Setup IdP to accept rack-saml SP
 
-#### SP Metadata generation
+**SP Metadata generation**
 
 To connect a new SP to the existing IdP, you need to import SP's metadata into the IdP. rack-saml provides metadata generation function. It is generated at '/Shibboleth.sso/Metadata' by default.
 
-#### IdP configuration examples not to encrypt assertion
+**IdP configuration examples not to encrypt assertion**
 
 Current rack-saml implementation does not support assertion encryption because Onelogin::Saml does not support AuthnRequest signing and Response encryption. So thus, in the followings, we would like to show sample configurations to disable encryption in IdP assertion processing. These are not recommended for sensitive applications.
 
-##### Shibboleth IdP example
+**Shibboleth IdP example**
 
 Add the following configuration after <rp:DefaultRelyingParty> in relying-party.xml. You should specify sp entity id at the 'id' and the 'provider' attributes.
 
