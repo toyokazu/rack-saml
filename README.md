@@ -157,7 +157,7 @@ Add the following configuration after <rp:DefaultRelyingParty> in relying-party.
 * write spec files
 * ruby-opensaml (I hope someone implement it :)
 
-## License
+## License (MIT License)
 
 Copyright (C) 2011 by Toyokazu Akiyama.
 
