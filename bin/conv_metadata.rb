@@ -14,8 +14,13 @@ end
 file = File.new(ARGV[0])
 doc = REXML::Document.new(file)
 
+# Detect if XML uses MetaData namespace
+mdns = doc.root.namespaces.select{|k,v| v =~ /metadata/}
+MD = mdns.empty? ? "" : "#{mdns.keys.first}:"
+
+
 def get_list_type(elem)
-  if !elem.elements["IDPSSODescriptor"].nil?
+  if !elem.elements["#{MD}IDPSSODescriptor"].nil?
     return "idp_lists"
   end
   "sp_lists"
@@ -24,11 +29,11 @@ end
 def create_entity_hash(elem, list_type)
   case list_type
   when "idp_lists"
-    idp_elem = elem.elements["IDPSSODescriptor"]
+    idp_elem = elem.elements["#{MD}IDPSSODescriptor"]
     # the first certificate is used
     certificate = "-----BEGIN CERTIFICATE-----#{REXML::XPath.first(idp_elem, './/ds:X509Certificate', 'ds' => DS).text.gsub(/\s*$/, "")}\n-----END CERTIFICATE-----"
     saml2_http_redirect = nil
-    idp_elem.elements.each("SingleSignOnService") do |e|
+    idp_elem.elements.each("#{MD}SingleSignOnService") do |e|
       if e.attributes["Binding"] == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         saml2_http_redirect = e.attributes["Location"]
       end
@@ -36,11 +41,11 @@ def create_entity_hash(elem, list_type)
     return {"certificate" => certificate,
             "saml2_http_redirect" => saml2_http_redirect}
   when "sp_lists"
-    sp_elem = elem.elements["SPSSODescriptor"]
+    sp_elem = elem.elements["#{MD}SPSSODescriptor"]
     # the first certificate is used
     certificate = REXML::XPath.first(sp_elem, './/ds:X509Certificate', 'ds' => DS).text
     saml2_http_post = nil
-    sp_elem.elements.each("AssertionConsumerService") do |e|
+    sp_elem.elements.each("#{MD}AssertionConsumerService") do |e|
       if e.attributes["Binding"] == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         saml2_http_post = e.attributes["Location"]
       end
@@ -57,11 +62,11 @@ def add_entities(entities, elem)
 end
 
 entities = {"idp_lists" => {}, "sp_lists" => {}}
-doc.elements.each("EntityDescriptor") do |elem|
+doc.elements.each("#{MD}EntityDescriptor") do |elem|
   add_entities(entities, elem)
 end
 
-doc.elements.each("EntitiesDescriptor/EntityDescriptor") do |elem|
+doc.elements.each("#{MD}EntitiesDescriptor/#{MD}EntityDescriptor") do |elem|
   add_entities(entities, elem)
 end
 
