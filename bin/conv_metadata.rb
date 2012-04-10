@@ -14,13 +14,8 @@ end
 file = File.new(ARGV[0])
 doc = REXML::Document.new(file)
 
-# Detect if XML uses MetaData namespace
-mdns = doc.root.namespaces.select{|k,v| v =~ /metadata/}
-MD = mdns.empty? ? "" : "#{mdns.keys.first}:"
-
-
 def get_list_type(elem)
-  if !elem.elements["#{MD}IDPSSODescriptor"].nil?
+  if elem.elements.any? {|el| el.has_name?("IDPSSODescriptor")}
     return "idp_lists"
   end
   "sp_lists"
@@ -29,11 +24,17 @@ end
 def create_entity_hash(elem, list_type)
   case list_type
   when "idp_lists"
-    idp_elem = elem.elements["#{MD}IDPSSODescriptor"]
+    idp_elem = elem.elements.find {|el| el.has_name?("IDPSSODescriptor")}
     # the first certificate is used
-    certificate = "-----BEGIN CERTIFICATE-----#{REXML::XPath.first(idp_elem, './/ds:X509Certificate', 'ds' => DS).text.gsub(/\s*$/, "")}\n-----END CERTIFICATE-----"
+    cert_elem = REXML::XPath.first(idp_elem, './/ds:X509Certificate', 'ds' => DS)
+    # reject an IdP without a certificate
+    if cert_elem.nil?
+      puts "specified metadata has an IdP without certificate!"
+      exit 1
+    end
+    certificate = "-----BEGIN CERTIFICATE-----#{cert_elem.text.gsub(/\s+$/, "")}\n-----END CERTIFICATE-----"
     saml2_http_redirect = nil
-    idp_elem.elements.each("#{MD}SingleSignOnService") do |e|
+    idp_elem.elements.find_all {|el| el.has_name?("SingleSignOnService")}.each do |e|
       if e.attributes["Binding"] == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
         saml2_http_redirect = e.attributes["Location"]
       end
@@ -41,11 +42,14 @@ def create_entity_hash(elem, list_type)
     return {"certificate" => certificate,
             "saml2_http_redirect" => saml2_http_redirect}
   when "sp_lists"
-    sp_elem = elem.elements["#{MD}SPSSODescriptor"]
+    sp_elem = elem.elements.find {|el| el.has_name?("SPSSODescriptor")}
+    #puts sp_elem.attributes["entityID"]
     # the first certificate is used
-    certificate = REXML::XPath.first(sp_elem, './/ds:X509Certificate', 'ds' => DS).text
+    # permit a SP without a certificate
+    cert_elem = REXML::XPath.first(sp_elem, './/ds:X509Certificate', 'ds' => DS)
+    certificate = cert_elem.nil? ? "" : "-----BEGIN CERTIFICATE-----\n#{cert_elem.text.gsub(/\s+$/, "")}\n-----END CERTIFICATE-----"
     saml2_http_post = nil
-    sp_elem.elements.each("#{MD}AssertionConsumerService") do |e|
+    sp_elem.elements.find_all {|el| el.has_name?("AssertionConsumerService")}.each do |e|
       if e.attributes["Binding"] == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
         saml2_http_post = e.attributes["Location"]
       end
@@ -62,12 +66,14 @@ def add_entities(entities, elem)
 end
 
 entities = {"idp_lists" => {}, "sp_lists" => {}}
-doc.elements.each("#{MD}EntityDescriptor") do |elem|
+doc.elements.find_all {|el| el.has_name?("EntityDescriptor")}.each do |elem|
   add_entities(entities, elem)
 end
 
-doc.elements.each("#{MD}EntitiesDescriptor/#{MD}EntityDescriptor") do |elem|
-  add_entities(entities, elem)
+doc.elements.find_all {|el| el.has_name?("EntitiesDescriptor")}.each do |elem1|
+  elem1.elements.find_all {|el| el.has_name?("EntityDescriptor")}.each do |elem2|
+    add_entities(entities, elem2)
+  end
 end
 
 puts entities.to_yaml
