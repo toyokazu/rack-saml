@@ -32,7 +32,8 @@ def create_entity_hash(elem, list_type)
       puts "specified metadata has an IdP without certificate!"
       exit 1
     end
-    certificate = "-----BEGIN CERTIFICATE-----#{cert_elem.text.gsub(/\s+$/, "")}\n-----END CERTIFICATE-----"
+    # Cert must be split to 64 char lines (else OpenSSL gives "nested asn1" error)
+    certificate = "-----BEGIN CERTIFICATE-----\n#{cert_elem.text.gsub(/\s+$/, "").scan(/.{1,64}/).join("\n")}\n-----END CERTIFICATE-----"
     saml2_http_redirect = nil
     idp_elem.elements.find_all {|el| el.has_name?("SingleSignOnService")}.each do |e|
       if e.attributes["Binding"] == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
