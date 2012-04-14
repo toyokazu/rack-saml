@@ -2,7 +2,8 @@
 require File.expand_path('../lib/rack-saml/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.add_dependency 'ruby-saml', '~> 0.4.7'
+  gem.add_dependency 'ruby-saml', '~> 0.5.2'
+  gem.add_development_dependency 'rspec'
 
   gem.authors       = ["Toyokazu Akiyama"]
   gem.email         = ["toyokazu@gmail.com"]

@@ -33,7 +33,7 @@ def create_entity_hash(elem, list_type)
       exit 1
     end
     # Cert must be split to 64 char lines (else OpenSSL gives "nested asn1" error)
-    certificate = "-----BEGIN CERTIFICATE-----\n#{cert_elem.text.gsub(/\s+$/, "").scan(/.{1,64}/).join("\n")}\n-----END CERTIFICATE-----"
+    certificate = "-----BEGIN CERTIFICATE-----\n#{cert_elem.text.gsub(/\s+/, "").scan(/.{1,64}/).join("\n")}\n-----END CERTIFICATE-----"
     saml2_http_redirect = nil
     idp_elem.elements.find_all {|el| el.has_name?("SingleSignOnService")}.each do |e|
       if e.attributes["Binding"] == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
@@ -48,7 +48,7 @@ def create_entity_hash(elem, list_type)
     # the first certificate is used
     # permit a SP without a certificate
     cert_elem = REXML::XPath.first(sp_elem, './/ds:X509Certificate', 'ds' => DS)
-    certificate = cert_elem.nil? ? "" : "-----BEGIN CERTIFICATE-----\n#{cert_elem.text.gsub(/\s+$/, "")}\n-----END CERTIFICATE-----"
+    certificate = cert_elem.nil? ? "" : "-----BEGIN CERTIFICATE-----\n#{cert_elem.text.gsub(/\s+/, "").scan(/.{1,64}/).join("\n")}\n-----END CERTIFICATE-----"
     saml2_http_post = nil
     sp_elem.elements.find_all {|el| el.has_name?("AssertionConsumerService")}.each do |e|
       if e.attributes["Binding"] == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
