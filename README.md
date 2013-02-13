@@ -90,13 +90,14 @@ Configuration to set SAML parameters. At least, you must configure saml_idp or s
 * *saml_sess_timeout*: SP session timeout (default: 1800 seconds)
 * *shib_app_id*: If you want to use the middleware as Shibboleth SP, you should specify an application ID. In the Shibboleth SP default configuration, 'default' is used as the application ID.
 * *shib_ds*: If you want to use the middleware as Shibboleth SP and use discovery service, specify the uri of the Discovery Service.
+* *saml_sp*: Set the SAML SP's entity ID
 * *sp_cert*: path to the SAML SP's certificate file, e.g. cert.pem (AuthnRequest Signing and Response Encryption are not supported yet)
 * *sp_key*: path to the SAML SP's key file, e.g. key.pem (AuthnRequest Signing and Response Encryption are not supported yet)
 
-SAML SP's entity ID (saml_sp) is automatically generated from request URI and /rack-saml-sp (fixed path name). The Assertion Consumer Service URI is generated from request URI and protected_path.
+If not set explicitly, SAML SP's entity ID (saml_sp) is automatically generated from request URI and /rack-saml-sp (fixed path name). The Assertion Consumer Service URI is generated from request URI and protected_path.
 
     saml_sp_prefix = "#{request.scheme}://#{request.host}#{":#{request.port}" if request.port}#{request.script_name}"
-    @config['saml_sp'] = "#{saml_sp_prefix}/rack-saml-sp"
+    @config['saml_sp'] ||= "#{saml_sp_prefix}/rack-saml-sp"
     @config['assertion_consumer_service_uri'] = "#{saml_sp_prefix}#{@config['protected_path']}"
 
 **metadata.yml**
