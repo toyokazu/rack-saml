@@ -175,7 +175,7 @@ When you use omniauth with devise, the omniauth provider path becomes "/users/au
 
 ## License (MIT License)
 
-Copyright (C) 2011 by Toyokazu Akiyama.
+rack-saml is released under the MIT license.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
