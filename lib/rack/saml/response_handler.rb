@@ -25,8 +25,8 @@ module Rack
           end
           if !@response.config['shib_app_id'].nil?
             session.env['Shib-Application-ID'] = @response.config['shib_app_id']
-            session.env['Shib-Session-ID'] = session.get_sid('saml_res')
           end
+          session.env['Shib-Session-ID'] = session.get_sid('saml_res')
         end
         session.env.each do |k, v|
           env[k] = v

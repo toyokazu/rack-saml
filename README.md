@@ -55,6 +55,16 @@ In the following example, config/application.rb is used to Rack::Saml middleware
                                        :attribute_map => "#{Rails.root}/config/attribute-map.yml"}
     ...
 
+If you like to add this middleware like OmniAuth (add configuration into the config/initializers directory), you can use the following.
+
+    % vi config/initializers/rack_saml.rb
+    Rails.application.config.middleware.insert_after Rack::ETag, Rack::Saml,
+      {:config => "#{Rails.root}/config/rack-saml.yml",
+       :metadata => "#{Rails.root}/config/metadata.yml",
+       :attribute_map => "#{Rails.root}/config/attribute-map.yml"}
+
+If you use rack-saml with omniauth-shibboleth, Rack::Saml middleware must be loaded before OmniAuth::Builder. Thus, "insert_after Rack::ETag" is used in the above example.
+
 **Middleware options**
 
 * *:config*: path to rack-saml.yml file

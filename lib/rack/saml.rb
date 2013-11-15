@@ -160,7 +160,7 @@ module Rack
       if request.request_method == 'GET'
         if match_protected_path?(request) # generate AuthnRequest
           if session.is_valid?('saml_res') # the client already has a valid session
-            ResponseHandler.extract_attrs(request, session)
+            ResponseHandler.extract_attrs(env, session)
           else
             if !@config['shib_ds'].nil? # use discovery service (ds)
               if request.params['entityID'].nil? # start ds session
@@ -194,6 +194,9 @@ module Rack
             session.finish('saml_authreq')
             session.start('saml_res', @config['saml_sess_timeout'] || 1800)
             handler.extract_attrs(env, session, @attribute_map)
+            return Rack::Response.new.tap { |r|
+              r.redirect request.url
+            }.finish
           else
             return create_response(403, 'text/html', 'SAML Error: Invalid SAML response.')
           end
@@ -222,5 +225,6 @@ module Rack
         [message]
       ]
     end
+
   end
 end
