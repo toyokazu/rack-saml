@@ -5,6 +5,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'ruby-saml', '~> 0.5.2'
   gem.add_development_dependency 'rspec'
 
+  gem.license = 'MIT'
+
   gem.authors       = ["Toyokazu Akiyama"]
   gem.email         = ["toyokazu@gmail.com"]
   gem.description   = %q{SAML middleware for Rack (using ruby-saml)}
