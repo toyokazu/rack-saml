@@ -151,7 +151,7 @@ To connect a new SP to the existing IdP, you need to import SP's metadata into t
 
 **IdP configuration examples not to encrypt assertion**
 
-Current rack-saml implementation does not support assertion encryption because Onelogin::Saml does not support AuthnRequest signing and Response encryption. So thus, in the followings, we would like to show sample configurations to disable encryption in IdP assertion processing. These are not recommended for sensitive applications.
+Current rack-saml implementation does not support assertion encryption because OneLogin::RubySaml does not support AuthnRequest signing and Response encryption. So thus, in the followings, we would like to show sample configurations to disable encryption in IdP assertion processing. These are not recommended for sensitive applications.
 
 **Shibboleth IdP example**
 

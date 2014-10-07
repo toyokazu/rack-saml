@@ -4,7 +4,7 @@ module Rack
       require 'ruby-saml'
 
       def saml_settings
-        settings = Onelogin::Saml::Settings.new
+        settings = OneLogin::RubySaml::Settings.new
         settings.assertion_consumer_service_url = @config['assertion_consumer_service_uri']
         settings.issuer = @config['saml_sp']
         settings.idp_sso_target_url = @metadata['saml2_http_redirect']
