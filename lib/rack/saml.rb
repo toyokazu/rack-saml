@@ -131,7 +131,7 @@ module Rack
           return true if sid.nil? # no sid check
           return true if session['sid'] == sid # sid check
         else
-          if Time.now < Time.at(session['expired_at']) # before expiration
+          if Time.now < Time.parse(session['expired_at']) # before expiration
             return true if sid.nil? # no sid check
             return true if session['sid'] == sid # sid check
           end
