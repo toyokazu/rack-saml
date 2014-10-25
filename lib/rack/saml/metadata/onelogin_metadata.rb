@@ -7,7 +7,7 @@ module Rack
 
       def initialize(request, config, metadata)
         super(request, config, metadata)
-        @sp_metadata = Onelogin::Saml::Metadata.new
+        @sp_metadata = OneLogin::RubySaml::Metadata.new
       end
 
       def generate

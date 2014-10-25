@@ -7,7 +7,7 @@ module Rack
 
       def initialize(request, config, metadata)
         super(request, config, metadata)
-        @authrequest = Onelogin::Saml::Authrequest.new
+        @authrequest = OneLogin::RubySaml::Authrequest.new
       end
 
       def redirect_uri

@@ -8,7 +8,7 @@ module Rack
 
       def initialize(request, config, metadata)
         super(request, config, metadata)
-        @response = Onelogin::Saml::Response.new(@request.params['SAMLResponse'])
+        @response = OneLogin::RubySaml::Response.new(@request.params['SAMLResponse'])
         @response.settings = saml_settings
       end
 
