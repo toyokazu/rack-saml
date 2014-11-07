@@ -5,3 +5,5 @@ saml_idp: https://localhost/idp/shibboleth
 saml_sess_timeout: 1800
 shib_app_id: default
 shibb_ds: https://localhost/discovery/WAYF
+allowed_clock_drift: 60
+validation_error: true

@@ -10,6 +10,7 @@ rack-saml uses external libraries to generate and validate SAML AuthnRequest/Res
 ## Changes
 
 * version 0.0.2: SP session is supported using Rack::Session for Rack applications and ActionDispatch::Session for Rails applications. 
+* version 0.1.1: Update to fit newer ruby-saml.
 
 ## Limitations
 
@@ -19,15 +20,12 @@ Current implementation supports only Onelogin SAML assertion handler. It does no
 
 ## Getting Started
 
-### Installation
-
-    % gem install rack-saml
-
-### Setup Gemfile
+### Setup Gemfile and Installation
 
     % cd rails-app
     % vi Gemfile
     gem 'rack-saml'
+    % bundle install
 
 ### Setup Rack::Saml middleware
 
@@ -103,6 +101,8 @@ Configuration to set SAML parameters. At least, you must configure saml_idp or s
 * *saml_sp*: Set the SAML SP's entity ID
 * *sp_cert*: path to the SAML SP's certificate file, e.g. cert.pem (AuthnRequest Signing and Response Encryption are not supported yet)
 * *sp_key*: path to the SAML SP's key file, e.g. key.pem (AuthnRequest Signing and Response Encryption are not supported yet)
+* *allowed_clock_drift*: A clock margin (second) for checking NotBefore condition specified in a SAML Response (default: 0 seconds, 60 second may be good for local test).
+* *validation_error*: If set to true, a detailed reason of SAML response validation error will be shown on the browser (true/false)
 
 If not set explicitly, SAML SP's entity ID (saml_sp) is automatically generated from request URI and /rack-saml-sp (fixed path name). The Assertion Consumer Service URI is generated from request URI and protected_path.
 

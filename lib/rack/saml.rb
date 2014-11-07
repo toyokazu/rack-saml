@@ -18,15 +18,15 @@ module Rack
   #   'rack_saml' => {
   #     'ds.session' => {
   #       'sid' => temporally_generated_hash,
-  #       'expire_at' => xxxxx # timestamp
+  #       'expires_at' => xxxxx # timestamp
   #     }
   #     'saml_authreq.session' => {
   #       'sid' => temporally_generated_hash,
-  #       'expire_at' => xxxxx # timestamp
+  #       'expires_at' => xxxxx # timestamp
   #     }
   #     'saml_res.session' => {
   #       'sid' => temporally_generated_hash,
-  #       'expire_at' => xxxxx # timestamp,
+  #       'expires_at' => xxxxx # timestamp,
   #       'env' => {}
   #     }
   #   }
@@ -35,6 +35,9 @@ module Rack
     autoload "RequestHandler", 'rack/saml/request_handler'
     autoload "MetadataHandler", 'rack/saml/metadata_handler'
     autoload "ResponseHandler", 'rack/saml/response_handler'
+
+    class ValidationError < StandardError
+    end
 
     def default_config_path(config_file)
       ::File.expand_path("../../../config/#{config_file}", __FILE__)
@@ -112,7 +115,7 @@ module Rack
           sid = generate_sid
         end
         @session["#{type}.session"]['sid'] = sid
-        @session["#{type}.session"]['expired_at'] = period
+        @session["#{type}.session"]['expires_at'] = period
         @session["#{type}.session"]
       end
 
@@ -127,11 +130,11 @@ module Rack
       def is_valid?(type, sid = nil)
         session = @session["#{type}.session"]
         return false if session['sid'].nil? # no valid session
-        if session['expired_at'].nil? # no expiration
+        if session['expires_at'].nil? # no expiration
           return true if sid.nil? # no sid check
           return true if session['sid'] == sid # sid check
         else
-          if Time.now < Time.parse(session['expired_at'].to_s) # before expiration
+          if Time.now < Time.parse(session['expires_at'].to_s) # before expiration
             return true if sid.nil? # no sid check
             return true if session['sid'] == sid # sid check
           end
@@ -190,15 +193,19 @@ module Rack
       elsif request.request_method == 'POST' && match_protected_path?(request) # process Response
         if session.is_valid?('saml_authreq')
           handler = ResponseHandler.new(request, @config, @metadata['idp_lists'][@config['saml_idp']])
-          if handler.response.is_valid?
-            session.finish('saml_authreq')
-            session.start('saml_res', @config['saml_sess_timeout'] || 1800)
-            handler.extract_attrs(env, session, @attribute_map)
-            return Rack::Response.new.tap { |r|
-              r.redirect request.url
-            }.finish
-          else
-            return create_response(403, 'text/html', 'SAML Error: Invalid SAML response.')
+          begin
+            if handler.response.is_valid?
+              session.finish('saml_authreq')
+              session.start('saml_res', @config['saml_sess_timeout'] || 1800)
+              handler.extract_attrs(env, session, @attribute_map)
+              return Rack::Response.new.tap { |r|
+                r.redirect request.url
+              }.finish
+            else
+              return create_response(403, 'text/html', 'SAML Error: Invalid SAML response.')
+            end
+          rescue ValidationError => e
+            return create_response(403, 'text/html', "SAML Error: Invalid SAML response.<br/>Reason: #{e.message}")
           end
         else
           return create_response(500, 'text/html', 'No valid AuthnRequest session.')
