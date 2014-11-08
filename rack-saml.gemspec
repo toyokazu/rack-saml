@@ -4,6 +4,8 @@ require File.expand_path('../lib/rack-saml/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.add_dependency 'rack'
   gem.add_dependency 'ruby-saml', '~> 0.8.0'
+  gem.add_development_dependency 'rack-test'
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
 
   gem.license = 'MIT'
@@ -15,9 +17,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = ""
 
   gem.files         = `find . -not \\( -regex ".*\\.git.*" -o -regex "\\./pkg.*" -o -regex "\\./spec.*" \\)`.split("\n").map{ |f| f.gsub(/^.\//, '') }
-  #gem.files         = `find .`.split("\n").map{ |f| f.gsub(/^.\//, '') }
   gem.test_files    = `find spec/*`.split("\n")
-  #gem.test_files    = `find test/* spec/* features/*`.split("\n")
   gem.name          = "rack-saml"
   gem.require_paths = ["lib"]
   gem.version       = Rack::Saml::VERSION
