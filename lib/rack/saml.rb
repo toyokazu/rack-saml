@@ -18,15 +18,15 @@ module Rack
   #   'rack_saml' => {
   #     'ds.session' => {
   #       'sid' => temporally_generated_hash,
-  #       'expires_at' => xxxxx # timestamp
+  #       'expires' => xxxxx # timestamp (string)
   #     }
   #     'saml_authreq.session' => {
   #       'sid' => temporally_generated_hash,
-  #       'expires_at' => xxxxx # timestamp
+  #       'expires' => xxxxx # timestamp (string)
   #     }
   #     'saml_res.session' => {
   #       'sid' => temporally_generated_hash,
-  #       'expires_at' => xxxxx # timestamp,
+  #       'expires' => xxxxx, # timestamp (string)
   #       'env' => {}
   #     }
   #   }
@@ -39,41 +39,35 @@ module Rack
     class ValidationError < StandardError
     end
 
+    FILE_TYPE = [:config, :metadata, :attribute_map]
+    FILE_NAME = {
+      :config => 'rack-saml.yml',
+      :metadata => 'metadata.yml',
+      :attribute_map => 'attribute-map.yml'
+    }
+
     def default_config_path(config_file)
       ::File.expand_path("../../../config/#{config_file}", __FILE__)
     end
 
-    def default_config
-      default_config_path('rack-saml.yml')
-    end
-
-    def default_metadata
-      default_config_path('metadata.yml')
-    end
-
-    def default_attribute_map
-      default_config_path('attribute-map.yml')
+    def load_file(type)
+      if @opts[type].nil? || !::File.exists?(@opts[type])
+        @opts[type] = default_config_path(FILE_NAME[type])
+      end
+      eval "@#{type} = YAML.load_file(@opts[:#{type}])"
     end
 
     def initialize app, opts = {}
       @app = app
       @opts = opts
 
-      if @opts[:config].nil? || !::File.exists?(@opts[:config])
-        @opts[:config] = default_config
+      FILE_TYPE.each do |type|
+        load_file(type)
       end
-      @config = YAML.load_file(@opts[:config])
+
       if @config['assertion_handler'].nil?
         raise ArgumentError, "'assertion_handler' parameter should be specified in the :config file"
       end
-      if @opts[:metadata].nil? || !::File.exists?(@opts[:metadata])
-        @opts[:metadata] = default_metadata
-      end
-      @metadata = YAML.load_file(@opts[:metadata])
-      if @opts[:attribute_map].nil? || !::File.exists?(@opts[:attribute_map])
-        @opts[:attribute_map] = default_attribute_map
-      end
-      @attribute_map = YAML.load_file(@opts[:attribute_map])
     end
 
     class Session
@@ -102,7 +96,7 @@ module Rack
       def start(type, timeout = 300)
         sid = nil
         if timeout.nil?
-          period = nil
+          period = Time.now + 300
         else
           period = Time.now + timeout
         end
@@ -115,7 +109,7 @@ module Rack
           sid = generate_sid
         end
         @session["#{type}.session"]['sid'] = sid
-        @session["#{type}.session"]['expires_at'] = period
+        @session["#{type}.session"]['expires'] = period.to_s
         @session["#{type}.session"]
       end
 
@@ -130,11 +124,11 @@ module Rack
       def is_valid?(type, sid = nil)
         session = @session["#{type}.session"]
         return false if session['sid'].nil? # no valid session
-        if session['expires_at'].nil? # no expiration
+        if session['expires'].nil? # no expiration
           return true if sid.nil? # no sid check
           return true if session['sid'] == sid # sid check
         else
-          if Time.now < Time.parse(session['expires_at'].to_s) # before expiration
+          if Time.now < Time.parse(session['expires']) # before expiration
             return true if sid.nil? # no sid check
             return true if session['sid'] == sid # sid check
           end
