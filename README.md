@@ -1,5 +1,8 @@
 # SAML (Shibboleth) SP middleware for Rack
 
+[![Gem Version](http://img.shields.io/gem/v/rack-saml.svg)][gem]
+[![Build Status](http://img.shields.io/travis/toyokazu/rack-saml.svg)][travis]
+
 This project is deeply inspired by rack-shibboleth and ruby-saml. It is recommended to use the de facto SAML implementation such as OpenSAML from the security or the functional aspect. However, there are also requirements to use SAML for light weight applications implemented by Ruby. rack-shibboleth may be a candidate to support such kind of objective. However it lacks the configurability to fit OmniAuth and OmniAuth Shibboleth Strategy. It also lacks the upgrade path to the secure and the stable SAML implementation like OpenSAML. So thus I just implemented a prototype to support SAML (Shibboleth SP) for Rack middleware.
 
 OmniAuth Shibboleth Strategy
