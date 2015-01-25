@@ -144,7 +144,7 @@ module Rack
       # generate saml_sp from request uri and default path (rack-saml-sp)
       saml_sp_prefix = "#{request.scheme}://#{request.host}#{":#{request.port}" if request.port}#{request.script_name}"
       @config['saml_sp'] ||= "#{saml_sp_prefix}/rack-saml-sp"
-      @config['assertion_consumer_service_uri'] = "#{saml_sp_prefix}#{@config['protected_path']}"
+      @config['assertion_consumer_service_uri'] ||= "#{saml_sp_prefix}#{@config['protected_path']}"
       # for debug
       #return [
       #  403,
