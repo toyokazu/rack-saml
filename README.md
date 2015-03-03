@@ -1,14 +1,14 @@
-# SAML (Shibboleth) SP middleware for Rack
+# Rack::SAML, a SAML (Shibboleth) SP Rack middleware
 
 [![Gem Version](http://img.shields.io/gem/v/rack-saml.svg)](http://rubygems.org/gems/rack-saml)
 [![Build Status](https://travis-ci.org/toyokazu/rack-saml.svg?branch=master)](https://travis-ci.org/toyokazu/rack-saml)
 
-This project is deeply inspired by rack-shibboleth and ruby-saml. It is recommended to use the de facto SAML implementation such as OpenSAML from the security or the functional aspect. However, there are also requirements to use SAML for light weight applications implemented by Ruby. rack-shibboleth may be a candidate to support such kind of objective. However it lacks the configurability to fit OmniAuth and OmniAuth Shibboleth Strategy. It also lacks the upgrade path to the secure and the stable SAML implementation like OpenSAML. So thus I just implemented a prototype to support SAML (Shibboleth SP) for Rack middleware.
+This project is deeply inspired by rack-shibboleth and ruby-saml. It is recommended to use the de facto SAML implementation such as OpenSAML from the security or the functional aspect. However, there are also requirements to use SAML for light weight applications implemented by Ruby. rack-shibboleth may be a candidate to support such kind of objective. However it lacks the configurability to fit OmniAuth and OmniAuth Shibboleth Strategy. It also lacks the upgrade path to the secure and the stable SAML implementation like OpenSAML. So rack-saml is implemented just a prototype Rack middleware. to support SAML (Shibboleth SP).
 
 OmniAuth Shibboleth Strategy
 https://github.com/toyokazu/omniauth-shibboleth
 
-rack-saml uses external libraries to generate and validate SAML AuthnRequest/Response. It uses Rack functions to implement SAML Transport (HTTP Redirect Binding and HTTP POST Binding).
+rack-saml uses external libraries to generate and validate SAML AuthnRequest/Response. It uses basic Rack functions to implement SAML Transport (HTTP Redirect Binding and HTTP POST Binding).
 
 ## Changes
 
