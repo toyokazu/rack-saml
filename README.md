@@ -106,12 +106,13 @@ Configuration to set SAML parameters. At least, you must configure saml_idp or s
 * *sp_key*: path to the SAML SP's key file, e.g. key.pem (AuthnRequest Signing and Response Encryption are not supported yet)
 * *allowed_clock_drift*: A clock margin (second) for checking NotBefore condition specified in a SAML Response (default: 0 seconds, 60 second may be good for local test).
 * *validation_error*: If set to true, a detailed reason of SAML response validation error will be shown on the browser (true/false)
+* *assertion_consumer_service_uri*: The URI for the SP's assertion consumer service. Automatically generated if not set (see below)
 
 If not set explicitly, SAML SP's entity ID (saml_sp) is automatically generated from request URI and /rack-saml-sp (fixed path name). The Assertion Consumer Service URI is generated from request URI and protected_path.
 
     saml_sp_prefix = "#{request.scheme}://#{request.host}#{":#{request.port}" if request.port}#{request.script_name}"
     @config['saml_sp'] ||= "#{saml_sp_prefix}/rack-saml-sp"
-    @config['assertion_consumer_service_uri'] = "#{saml_sp_prefix}#{@config['protected_path']}"
+    @config['assertion_consumer_service_uri'] ||= "#{saml_sp_prefix}#{@config['protected_path']}"
 
 **metadata.yml**
 
