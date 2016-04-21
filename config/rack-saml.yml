@@ -7,5 +7,5 @@ shib_app_id: default
 shibb_ds: https://localhost/discovery/WAYF
 allowed_clock_drift: 60
 validation_error: true
-certificate_path: config/cert/server_development.crt
-private_key_path: config/cert/server_development.key
+sp_cert: config/cert/development_cert.pem
+sp_key: config/cert/development_key.pem
