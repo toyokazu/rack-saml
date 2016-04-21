@@ -7,8 +7,16 @@ module Rack
         settings = OneLogin::RubySaml::Settings.new
         settings.assertion_consumer_service_url = @config['assertion_consumer_service_uri']
         settings.issuer = @config['saml_sp']
-        settings.certificate = IO::File.open(@config['certificate_path'], "r").read if @config['certificate_path']
-        settings.private_key = IO::File.open(@config['private_key_path'], "r").read if @config['private_key_path']
+        if ENV['SP_CERT]']
+          settings.certificate = ENV['SP_CERT']
+        elsif @config['sp_cert']
+          settings.certificate = IO::File.open(@config['sp_cert'], 'r').read
+        end
+        if ENV['SP_KEY']
+          settings.private_key = ENV['SP_KEY']
+        elsif @config['sp_key']
+          settings.private_key = IO::File.open(@config['sp_key'], 'r').read
+        end
         settings.idp_sso_target_url = @metadata['saml2_http_redirect']
         settings.idp_cert = @metadata['certificate']
         settings.name_identifier_format = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
