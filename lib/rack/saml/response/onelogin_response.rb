@@ -9,9 +9,9 @@ module Rack
       def initialize(request, config, metadata)
         super(request, config, metadata)
         @response = OneLogin::RubySaml::Response.new(@request.params['SAMLResponse'], {
-          :allowed_clock_drift => config['allowed_clock_drift']
+          :allowed_clock_drift => config['allowed_clock_drift'],
+          :settings => saml_settings
         })
-        @response.settings = saml_settings
       end
 
       def is_valid?
