@@ -7,7 +7,7 @@ module Rack
         settings = OneLogin::RubySaml::Settings.new
         settings.assertion_consumer_service_url = @config['assertion_consumer_service_uri']
         settings.issuer = @config['saml_sp']
-        if ENV['SP_CERT]']
+        if ENV['SP_CERT']
           settings.certificate = ENV['SP_CERT']
         elsif @config['sp_cert']
           settings.certificate = IO::File.open(@config['sp_cert'], 'r').read
