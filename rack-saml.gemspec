@@ -3,7 +3,7 @@ require File.expand_path('../lib/rack-saml/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.add_dependency 'rack'
-  gem.add_dependency 'ruby-saml', '~> 1.1.2'
+  gem.add_dependency 'ruby-saml', '~> 1.3.0'
   gem.add_development_dependency 'rack-test'
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
