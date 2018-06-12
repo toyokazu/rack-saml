@@ -9,3 +9,4 @@ allowed_clock_drift: 60
 validation_error: true
 sp_cert: config/cert/development_cert.pem
 sp_key: config/cert/development_key.pem
+want_assertions_encrypted: false
