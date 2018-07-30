@@ -10,12 +10,12 @@ module Rack
         if ENV['SP_CERT']
           settings.certificate = ENV['SP_CERT']
         elsif @config['sp_cert']
-          settings.certificate = IO::File.open(@config['sp_cert'], 'r').read
+          settings.certificate = ::File.open(@config['sp_cert'], 'r').read
         end
         if ENV['SP_KEY']
           settings.private_key = ENV['SP_KEY']
         elsif @config['sp_key']
-          settings.private_key = IO::File.open(@config['sp_key'], 'r').read
+          settings.private_key = ::File.open(@config['sp_key'], 'r').read
         end
         settings.idp_sso_target_url = @metadata['saml2_http_redirect']
         settings.idp_cert = @metadata['certificate']
