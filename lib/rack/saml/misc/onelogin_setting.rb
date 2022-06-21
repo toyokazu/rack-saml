@@ -21,6 +21,8 @@ module Rack
         settings.idp_cert = @metadata['certificate']
         settings.name_identifier_format = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
         settings.security[:want_assertions_encrypted] = @config['want_assertions_encrypted']
+        settings.security[:want_assertions_signed] = @config['want_assertions_signed']
+        settings.security[:authn_requests_signed] = @config['authn_requests_signed']
         #settings.authn_context = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport"
         settings
       end
